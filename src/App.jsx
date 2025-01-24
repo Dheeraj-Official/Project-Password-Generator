@@ -10,7 +10,6 @@ function App() {
 
   const passwordRef = useRef(null);
 
-  // Helper functions
   const checkPassword = (password) =>
     [...password].some((char) => char >= "0" && char <= "9");
   const checkSpecialChar = (password) =>
@@ -63,10 +62,10 @@ function App() {
   }, [length, numberAllowed, charAllowed, generatePassword]);
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-[#2B2D42] to-[#1A1B26] text-white px-4">
-      <div className="max-w-lg w-full bg-[#24263B] rounded-lg shadow-lg p-6 space-y-6">
+    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-purple-800 via-gray-900 to-black text-white px-4">
+      <div className="max-w-lg w-full bg-opacity-80 bg-black rounded-lg shadow-lg p-6 space-y-6">
         {/* Title */}
-        <h1 className="text-3xl font-bold text-center text-cyan-400 animate-bounce">
+        <h1 className="text-3xl font-bold text-center text-cyan-400 animate-pulse">
           Password Generator
         </h1>
 
@@ -91,7 +90,7 @@ function App() {
         {/* Copy Confirmation */}
         {copied && (
           <p className="text-center text-green-400 font-semibold animate-fadeIn">
-            Password copied to clipboard!
+            Copied!
           </p>
         )}
 
@@ -104,7 +103,6 @@ function App() {
 
         {/* Controls */}
         <div className="space-y-4">
-          {/* Length Control */}
           <div className="flex flex-col md:flex-row items-center justify-between">
             <label className="flex items-center space-x-2 text-sm">
               <span className="text-gray-400">Length:</span>
@@ -120,7 +118,6 @@ function App() {
             />
           </div>
 
-          {/* Number Checkbox */}
           <div className="flex items-center justify-between">
             <label className="flex items-center space-x-2">
               <input
@@ -133,7 +130,6 @@ function App() {
             </label>
           </div>
 
-          {/* Character Checkbox */}
           <div className="flex items-center justify-between">
             <label className="flex items-center space-x-2">
               <input
