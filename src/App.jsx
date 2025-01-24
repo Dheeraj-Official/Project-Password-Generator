@@ -17,25 +17,37 @@ function App() {
 
   const calculateStrength = useCallback(() => {
     let strength = 0;
-    if (length >= 8) strength++;
-    if (length >= 12) strength++;
+    if (password.length >= 8) strength++;
+    if (password.length >= 12) strength++;
     if (numberAllowed && checkPassword(password)) strength++;
     if (charAllowed && checkSpecialChar(password)) strength++;
 
     const levels = ["Very Weak", "Weak", "Medium", "Strong", "Very Strong"];
     return levels[strength] || "Very Weak";
-  }, [length, numberAllowed, charAllowed, password]);
+  }, [password, numberAllowed, charAllowed]);
 
   const getStrengthColor = useCallback(() => {
     const strength = calculateStrength();
     const colors = {
-      "Very Weak": "text-red-400",
-      Weak: "text-orange-400",
-      Medium: "text-yellow-400",
-      Strong: "text-green-400",
-      "Very Strong": "text-cyan-400",
+      "Very Weak": "border-red-600", // Red for very weak
+      Weak: "border-orange-600",     // Orange for weak
+      Medium: "border-yellow-600",   // Yellow for medium
+      Strong: "border-green-600",    // Green for strong
+      "Very Strong": "border-pink-500", // Pink for very strong
     };
-    return colors[strength] || "text-gray-400";
+    return colors[strength] || "border-gray-400";
+  }, [calculateStrength]);
+
+  const getTextColor = useCallback(() => {
+    const strength = calculateStrength();
+    const colors = {
+      "Very Weak": "text-red-600",  // Red for very weak
+      Weak: "text-orange-600",      // Orange for weak
+      Medium: "text-yellow-600",    // Yellow for medium
+      Strong: "text-green-600",     // Green for strong
+      "Very Strong": "text-pink-500", // Pink for very strong
+    };
+    return colors[strength] || "text-gray-400"; // Default to gray if no strength
   }, [calculateStrength]);
 
   const generatePassword = useCallback(() => {
@@ -57,91 +69,86 @@ function App() {
     setTimeout(() => setCopied(false), 2000);
   }, [password]);
 
+  // Regenerate password on settings change
   useEffect(() => {
     generatePassword();
   }, [length, numberAllowed, charAllowed, generatePassword]);
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-purple-800 via-gray-900 to-black text-white px-6 sm:px-8">
-      <div className="max-w-lg w-full bg-opacity-80 bg-black rounded-lg shadow-lg p-6 sm:p-8 space-y-6">
-        {/* Title */}
-        <h1 className="text-3xl font-bold text-center text-cyan-400 animate-pulse">
+    <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-800 via-gray-900 to-black text-white px-4 sm:px-6">
+      <div className="max-w-md w-full bg-opacity-90 bg-black rounded-lg shadow-lg p-5 sm:p-6 space-y-5">
+        <h1 className="text-2xl sm:text-3xl font-bold text-center text-cyan-400">
           Password Generator
         </h1>
 
-        {/* Password Display */}
-        <div className="relative flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0">
+        <div className="relative flex flex-col items-center space-y-3">
           <input
             ref={passwordRef}
             type="text"
             value={password}
-            readOnly
-            className="flex-grow px-4 py-3 text-gray-900 bg-gray-200 rounded-lg focus:outline-none shadow-md placeholder:text-gray-400"
-            placeholder="Generated Password"
+            onChange={(e) => setPassword(e.target.value)}
+            className={`w-full px-4 py-2 text-gray-900 bg-gray-200 rounded-lg focus:outline-none shadow-md placeholder:text-gray-400 transition-all duration-300 focus:ring-4 hover:scale-105 ${getStrengthColor()} border-4 ${getTextColor()}`} // Text and border color based on strength
+            placeholder="Type or Generate Password"
           />
-          <button
-            onClick={copyPasswordToClipboard}
-            disabled={copied}
-            className={`sm:absolute sm:right-2 bg-gradient-to-r from-pink-500 to-cyan-500 text-white px-4 py-2 rounded-lg hover:scale-105 hover:shadow-lg active:scale-95 transition-all w-full sm:w-auto ${
-              copied ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            {copied ? "Copied!" : "Copy"}
-          </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={copyPasswordToClipboard}
+              disabled={copied}
+              className={`bg-gradient-to-r from-pink-500 to-cyan-500 text-white px-4 py-2 rounded-lg hover:scale-105 active:scale-95 transition-all ${copied ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              {copied ? "Copied!" : "Copy"}
+            </button>
+            <button
+              onClick={generatePassword}
+              className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 rounded-lg hover:scale-105 active:scale-95 transition-all"
+            >
+              Generate
+            </button>
+          </div>
         </div>
 
-        {/* Copy Confirmation */}
         {copied && (
-          <p className="text-center text-green-400 font-semibold animate-fadeIn">
-            Copied!
+          <p className="text-center text-green-400 font-semibold">
+            Password copied!
           </p>
         )}
 
-        {/* Password Strength */}
-        <p
-          className={`text-center font-bold ${getStrengthColor()} text-lg`}
-        >
+        <p className={`text-center font-bold ${getStrengthColor()} text-lg`}>
           Strength: {calculateStrength()}
         </p>
 
-        {/* Controls */}
         <div className="space-y-4">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <label className="flex items-center space-x-2 text-sm">
-              <span className="text-gray-400">Length:</span>
-              <span className="text-cyan-400 font-semibold">{length}</span>
-            </label>
+          <div className="flex items-center justify-between">
+            <label className="text-sm text-gray-400">Length: {length}</label>
             <input
               type="range"
               min="4"
               max="20"
               value={length}
               onChange={(e) => setLength(Number(e.target.value))}
-              className="cursor-pointer w-full mt-2 md:mt-0 md:w-1/2"
+              className="w-3/4 cursor-pointer accent-cyan-500"
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={numberAllowed}
-                onChange={() => setNumberAllowed(!numberAllowed)}
-                className="cursor-pointer accent-cyan-500"
-              />
-              <span className="text-gray-400">Include Numbers</span>
-            </label>
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={numberAllowed}
+              onChange={() => setNumberAllowed(!numberAllowed)}
+              className="cursor-pointer accent-cyan-500"
+            />
+            <label className="text-sm text-gray-400">Include Numbers</label>
           </div>
 
-          <div className="flex items-center justify-between">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={charAllowed}
-                onChange={() => setCharAllowed(!charAllowed)}
-                className="cursor-pointer accent-pink-500"
-              />
-              <span className="text-gray-400">Include Special Characters</span>
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={charAllowed}
+              onChange={() => setCharAllowed(!charAllowed)}
+              className="cursor-pointer accent-pink-500"
+            />
+            <label className="text-sm text-gray-400">
+              Include Special Characters
             </label>
           </div>
         </div>
