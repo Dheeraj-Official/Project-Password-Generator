@@ -62,28 +62,31 @@ function App() {
   }, [length, numberAllowed, charAllowed, generatePassword]);
 
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-purple-800 via-gray-900 to-black text-white px-4">
-      <div className="max-w-lg w-full bg-opacity-80 bg-black rounded-lg shadow-lg p-6 space-y-6">
+    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-purple-800 via-gray-900 to-black text-white px-6 sm:px-8">
+      <div className="max-w-lg w-full bg-opacity-80 bg-black rounded-lg shadow-lg p-6 sm:p-8 space-y-6">
         {/* Title */}
         <h1 className="text-3xl font-bold text-center text-cyan-400 animate-pulse">
           Password Generator
         </h1>
 
         {/* Password Display */}
-        <div className="flex flex-col md:flex-row items-center shadow-lg rounded-lg overflow-hidden">
+        <div className="relative flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0">
           <input
             ref={passwordRef}
             type="text"
             value={password}
             readOnly
-            className="flex-grow px-4 py-2 text-gray-900 bg-gray-200 rounded-t-lg md:rounded-tr-none md:rounded-l-lg focus:outline-none transition-all hover:shadow-lg"
+            className="flex-grow px-4 py-3 text-gray-900 bg-gray-200 rounded-lg focus:outline-none shadow-md placeholder:text-gray-400"
             placeholder="Generated Password"
           />
           <button
             onClick={copyPasswordToClipboard}
-            className="bg-gradient-to-r from-pink-500 to-cyan-500 text-white px-4 py-2 rounded-b-lg md:rounded-r-lg md:rounded-bl-none hover:scale-105 hover:shadow-pink-500/50 active:scale-95 transition-all"
+            disabled={copied}
+            className={`sm:absolute sm:right-2 bg-gradient-to-r from-pink-500 to-cyan-500 text-white px-4 py-2 rounded-lg hover:scale-105 hover:shadow-lg active:scale-95 transition-all w-full sm:w-auto ${
+              copied ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Copy
+            {copied ? "Copied!" : "Copy"}
           </button>
         </div>
 
